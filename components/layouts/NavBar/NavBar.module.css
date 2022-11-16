@@ -1,0 +1,9 @@
+.navBar {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  display: block;
+  height: 30px;
+  border: 1px;
+  border-style: solid;
+}
