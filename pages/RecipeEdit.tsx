@@ -1,5 +1,5 @@
 import React from "react";
-import InputSideBar from "../components/inputComponents/InputSideBar/InputSideBar";
+import InputSideBar from "../components/inputComponents/inputSidebar/InputSidebar";
 import HeaderInputComponent from "../components/inputComponents/headerInputComponent/HeaderInputComponent";
 import MainInputComponent from "../components/inputComponents/mainInputComponent/MainInputComponent";
 

@@ -28,6 +28,9 @@ const SignIn = () => {
       const friendListArray = {
         friendList: [],
       };
+      const cookBookArray = {
+        cookBooks: ["All Recipes"],
+      };
       await setDoc(doc(db, signUpEmail, "social"), socialCollection);
       await setDoc(
         doc(db, signUpEmail, "social", "socialItems", "friendRequestArray"),
@@ -38,6 +41,10 @@ const SignIn = () => {
         friendListArray
       );
       await setDoc(doc(db, signUpEmail, "recipeCollection"), recipeCollection);
+      await setDoc(
+        doc(db, signUpEmail, "recipeCollection", "miscItems", "cookBookArray"),
+        cookBookArray
+      );
     } catch (err) {
       console.log(err);
     }

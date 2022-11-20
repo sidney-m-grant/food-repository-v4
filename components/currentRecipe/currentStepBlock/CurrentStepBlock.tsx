@@ -14,7 +14,12 @@ const CurrentStepBlock: React.FC<Props> = ({ stepBlock }) => {
     );
   });
 
-  return <ol>{listSteps}</ol>;
+  return (
+    <ol>
+      <h5>{stepBlock.for}</h5>
+      {listSteps}
+    </ol>
+  );
 };
 
 export default CurrentStepBlock;

@@ -4,6 +4,7 @@ import { store } from "../../util/store";
 import CurrentIngredientBlock from "../currentIngredientBlock/CurrentIngredientBlock";
 import CurrentStepBlock from "../currentStepBlock/CurrentStepBlock";
 import styles from "./CurrentRecipeContainer.module.css";
+import CurrentRecipeHeader from "../currentRecipeHeader/CurrentRecipeHeader";
 
 const CurrentRecipeContainer = () => {
   const state = useStateHookState(store);
@@ -30,9 +31,12 @@ const CurrentRecipeContainer = () => {
   });
 
   return (
-    <div className={styles.CurrentRecipeContainer}>
-      <ol>{listIngredients}</ol>
-      <ol>{listSteps}</ol>
+    <div>
+      <CurrentRecipeHeader />
+      <div className={styles.CurrentRecipeContainer}>
+        <ul>{listIngredients}</ul>
+        <ul>{listSteps}</ul>
+      </div>
     </div>
   );
 };

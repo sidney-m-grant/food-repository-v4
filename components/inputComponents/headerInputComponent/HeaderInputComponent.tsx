@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { store } from "../../util/store";
 import { useState as useStateHookState } from "@hookstate/core";
 import styles from "./HeaderInputComponent.module.css";
@@ -9,6 +9,7 @@ interface Props {
 
 const HeaderInputComponent: React.FC<Props> = ({ recipeInputType }) => {
   const state = useStateHookState(store);
+  const [selectedCookBook, setSelectedCookBook] = useState("");
 
   const handleEditedPrepTimeChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -80,6 +81,22 @@ const HeaderInputComponent: React.FC<Props> = ({ recipeInputType }) => {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     state.inputRecipe.briefDescription.set(e.target.value);
+  };
+
+  const listOfCookBooks = state.cookBookList
+    .get()
+    .filter((cookBook) => cookBook != "All Recipes");
+
+  const filteredListOfCookBooks = listOfCookBooks.map((entry) => {
+    return (
+      <option key={entry} value={entry}>
+        {entry}
+      </option>
+    );
+  });
+
+  const handleCookBookSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedCookBook(e.target.value);
   };
 
   return (
@@ -161,6 +178,13 @@ const HeaderInputComponent: React.FC<Props> = ({ recipeInputType }) => {
           value={state.inputRecipe.recipeName.get()}
         ></input>
       )}
+
+      {state.cookBookList.get() ? (
+        <select onChange={handleCookBookSelect}>
+          <option value={""}></option>
+          {filteredListOfCookBooks}
+        </select>
+      ) : null}
     </div>
   );
 };

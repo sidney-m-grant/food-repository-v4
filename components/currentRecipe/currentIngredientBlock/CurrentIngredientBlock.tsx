@@ -6,9 +6,22 @@ interface Props {
 }
 
 const CurrentIngredientBlock: React.FC<Props> = ({ ingredientBlock }) => {
+  const listIngredients = ingredientBlock.ingredients.map((ingredient) => {
+    return (
+      <li key={ingredient.id}>
+        <h5>
+          {ingredient.amount} {ingredient.unit} {ingredient.name}
+        </h5>
+      </li>
+    );
+  });
 
-  
-  return <div>CurrentIngredient</div>;
+  return (
+    <ol>
+      <h5>{ingredientBlock.for}</h5>
+      {listIngredients}
+    </ol>
+  );
 };
 
 export default CurrentIngredientBlock;

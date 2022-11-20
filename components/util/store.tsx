@@ -152,4 +152,5 @@ export const store = createState({
   inputRecipe: inputRecipe,
   editedImagePreview: "",
   inputImagePreview: "",
+  cookBookList: [],
 });
