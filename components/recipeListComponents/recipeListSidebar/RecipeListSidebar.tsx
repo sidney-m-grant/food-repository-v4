@@ -8,11 +8,21 @@ import RecipeListComponent from "../recipeListComponent/RecipeListComponent";
 import styles from "./RecipeListSidebar.module.css";
 import InputSidebarFunctions from "../../inputComponents/inputSidebar/inputSidebarFunctions/InputSidebarFunctions";
 import CookBooks from "../cookBooks/CookBooks";
+import SearchComponent from "../search/SearchComponent";
+import { DisplayType } from "../../../pages/RecipeList";
 
-const RecipeListSidebar = () => {
+export type OpenSubMenu = "search" | "cookBooks" | "editTools" | "";
+
+interface Props {
+  setDisplayType: React.Dispatch<React.SetStateAction<DisplayType>>;
+}
+
+const RecipeListSidebar: React.FC<Props> = ({ setDisplayType }) => {
   const [allRecipes, setAllRecipes] = useState<Recipe[]>([]);
-  const [openSubMenu, setOpenSubMenu] = useState<string>("");
+  const [openSubMenu, setOpenSubMenu] = useState<OpenSubMenu>("");
+  const [selectedCookBook, setSelectedCookBook] = useState<string>("");
   const { user } = useAuth();
+  const state = useStateHookState(store);
 
   useEffect(() => {
     const getRecipes = async () => {
@@ -24,6 +34,7 @@ const RecipeListSidebar = () => {
         ...doc.data(),
       }));
       const recipeArray: Recipe[] = [];
+      const globalIngredientArray: string[] = [];
       tempArray.forEach((recipe: Recipe) => {
         const temp: Recipe = {
           recipeName: recipe.recipeName,
@@ -40,7 +51,31 @@ const RecipeListSidebar = () => {
         };
         recipeArray.push(temp);
       });
+
+      for (let i = 0; i < recipeArray.length; i++) {
+        for (let j = 0; j < recipeArray[i].ingredientList.length; j++) {
+          for (
+            let k = 0;
+            k < recipeArray[i].ingredientList[j].ingredients.length;
+            k++
+          ) {
+            if (
+              globalIngredientArray.includes(
+                recipeArray[i].ingredientList[j].ingredients[k].name
+              )
+            ) {
+              continue;
+            }
+            globalIngredientArray.push(
+              recipeArray[i].ingredientList[j].ingredients[k].name
+            );
+          }
+        }
+      }
+      state.globalIngredientList.set(globalIngredientArray);
+      console.log(globalIngredientArray);
       setAllRecipes(recipeArray);
+      state.allRecipes.set(recipeArray);
     };
     getRecipes();
   }, [user?.email]);
@@ -48,6 +83,7 @@ const RecipeListSidebar = () => {
   const handleEditToolsClick = () => {
     if (openSubMenu !== "editTools") {
       setOpenSubMenu("editTools");
+      setSelectedCookBook("");
     } else {
       setOpenSubMenu("");
     }
@@ -56,6 +92,7 @@ const RecipeListSidebar = () => {
   const handleSearchClick = () => {
     if (openSubMenu !== "search") {
       setOpenSubMenu("search");
+      setSelectedCookBook("");
     } else {
       setOpenSubMenu("");
     }
@@ -75,14 +112,36 @@ const RecipeListSidebar = () => {
       {openSubMenu === "editTools" ? (
         <InputSidebarFunctions recipeInputType="edited" />
       ) : null}
-
+      <br></br>
       <button onClick={handleSearchClick}>Search</button>
       {openSubMenu === "search" ? (
-        <RecipeListComponent allRecipes={allRecipes} />
+        <SearchComponent
+          allRecipes={allRecipes}
+          setDisplayType={setDisplayType}
+        />
       ) : null}
-
+      <br></br>
       <button onClick={handleCookBooksClick}>Cook Books</button>
-      {openSubMenu === "cookBooks" ? <CookBooks /> : null}
+      {openSubMenu === "cookBooks" ? (
+        <CookBooks
+          setSelectedCookBook={setSelectedCookBook}
+          setOpenSubMenu={setOpenSubMenu}
+        />
+      ) : null}
+      {selectedCookBook && selectedCookBook !== "All Recipes" ? (
+        <RecipeListComponent
+          recipes={allRecipes.filter((recipe) => {
+            recipe.cookBook === selectedCookBook;
+          })}
+          setDisplayType={setDisplayType}
+        />
+      ) : null}
+      {selectedCookBook && selectedCookBook === "All Recipes" ? (
+        <RecipeListComponent
+          recipes={allRecipes}
+          setDisplayType={setDisplayType}
+        />
+      ) : null}
     </div>
   );
 };

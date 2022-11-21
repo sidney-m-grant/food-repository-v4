@@ -1,9 +1,10 @@
 .RecipeListSidebar {
-  height: 100%;
   width: 250px;
   position: fixed;
   left: 0;
   border: 1px;
   border-style: solid;
+  overflow-y: scroll;
   top: 30px;
+  bottom: 0px;
 }

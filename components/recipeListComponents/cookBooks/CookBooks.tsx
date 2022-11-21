@@ -5,8 +5,18 @@ import { useAuth } from "../../../context/AuthContext";
 import clone from "just-clone";
 import { useState as useStateHookState } from "@hookstate/core";
 import { store } from "../../util/store";
+import IndividualCookBook from "./individualCookBook/IndividualCookBook";
+import { OpenSubMenu } from "../recipeListSidebar/RecipeListSidebar";
 
-const CookBooks = () => {
+interface Props {
+  setSelectedCookBook: React.Dispatch<React.SetStateAction<string>>;
+  setOpenSubMenu: React.Dispatch<React.SetStateAction<OpenSubMenu>>;
+}
+
+const CookBooks: React.FC<Props> = ({
+  setSelectedCookBook,
+  setOpenSubMenu,
+}) => {
   const { user } = useAuth();
   const state = useStateHookState(store);
   const [cookBookList, setCookBookList] = useState<string[]>([]);
@@ -19,7 +29,6 @@ const CookBooks = () => {
         doc(db, user.email, "recipeCollection", "miscItems", "cookBookArray")
       );
       const cookBooks = snapshot.data()?.cookBooks;
-      console.log(cookBooks);
       state.cookBookList.set(cookBooks);
       setCookBookList(cookBooks);
     };
@@ -40,7 +49,14 @@ const CookBooks = () => {
   };
 
   const listOfCookBooks = cookBookList.map((cookBook) => {
-    return <li key={cookBookList.indexOf(cookBook)}>{cookBook}</li>;
+    return (
+      <IndividualCookBook
+        key={cookBookList.indexOf(cookBook)}
+        cookBook={cookBook}
+        setSelectedCookBook={setSelectedCookBook}
+        setOpenSubMenu={setOpenSubMenu}
+      ></IndividualCookBook>
+    );
   });
 
   return (

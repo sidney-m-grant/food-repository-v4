@@ -2,10 +2,15 @@ import React, { useState } from "react";
 import { store } from "../../../util/store";
 import { useState as useStateHookState, none } from "@hookstate/core";
 import clone from "just-clone";
-import { addDoc, collection } from "firebase/firestore";
+import { addDoc, collection, setDoc, doc } from "firebase/firestore";
 import { useAuth } from "../../../../context/AuthContext";
 import { db, storage } from "../../../../config/firebase";
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import {
+  deleteObject,
+  getDownloadURL,
+  ref,
+  uploadBytes,
+} from "firebase/storage";
 import { v4 } from "uuid";
 import Compressor from "compressorjs";
 
@@ -116,48 +121,114 @@ const InputSidebarFunctions: React.FC<Props> = ({ recipeInputType }) => {
     }
   };
 
+  const checkIfNameAlreadyExists = (name: string) => {
+    for (let i = 0; i < state.allRecipes.get().length; i++) {
+      if (name === state.allRecipes[i].recipeName.get()) {
+        return false;
+      }
+    }
+    return true;
+  };
+
   const uploadRecipe = async () => {
-    console.log(state.inputRecipe.get());
-    if (
-      state.inputRecipe.recipeName.get() &&
-      state.inputRecipe.stepList.get().length > 0 &&
-      state.inputRecipe.ingredientList.get().length > 0 &&
-      state.inputRecipe.recipeName.get() !== "cookBooks"
-    ) {
-      if (confirm("Upload Recipe?")) {
-        if (tempImageFile) {
-          let tempObject = clone(state.inputRecipe.get());
-          const imageRef = ref(
-            storage,
-            `${user?.email}/${tempImageFile.name + v4()}`
-          );
-          new Compressor(tempImageFile, {
-            quality: 0.2,
-            success(result) {
-              uploadBytes(imageRef, result)
-                .then((snapshot) => getDownloadURL(snapshot.ref))
-                .then((url) => (tempObject.imgPath = url))
-                .then(() =>
-                  addDoc(
-                    collection(
-                      db,
-                      `${user?.email}`,
-                      "recipeCollection",
-                      "recipes"
-                    ),
-                    tempObject
-                  )
-                );
-            },
-          });
-        } else {
-          await addDoc(
-            collection(db, `${user?.email}`, "recipeCollection", "recipes"),
-            state.inputRecipe.get()
-          );
+    if (recipeInputType === "input") {
+      if (
+        state.inputRecipe.recipeName.get() &&
+        state.inputRecipe.stepList.get().length > 0 &&
+        state.inputRecipe.ingredientList.get().length > 0 &&
+        state.inputRecipe.recipeName.get() !== "cookBooks" &&
+        checkIfNameAlreadyExists(state.inputRecipe.recipeName.get())
+      ) {
+        if (confirm("Upload Recipe?")) {
+          if (tempImageFile) {
+            let tempObject = clone(state.inputRecipe.get());
+            const imageRef = ref(
+              storage,
+              `${user?.email}/${tempImageFile.name + v4()}`
+            );
+            new Compressor(tempImageFile, {
+              quality: 0.2,
+              success(result) {
+                uploadBytes(imageRef, result)
+                  .then((snapshot) => getDownloadURL(snapshot.ref))
+                  .then((url) => (tempObject.imgPath = url))
+                  .then(() =>
+                    addDoc(
+                      collection(
+                        db,
+                        `${user?.email}`,
+                        "recipeCollection",
+                        "recipes"
+                      ),
+                      tempObject
+                    )
+                  );
+              },
+            });
+          } else {
+            await addDoc(
+              collection(db, `${user?.email}`, "recipeCollection", "recipes"),
+              state.inputRecipe.get()
+            );
+          }
+        }
+      }
+    } else if (recipeInputType === "edited") {
+      if (
+        state.editedRecipe.stepList.get().length > 0 &&
+        state.editedRecipe.ingredientList.get().length > 0
+      ) {
+        if (confirm("Upload Recipe?")) {
+          if (tempImageFile) {
+            const imgToDelete = state.editedRecipe.imgPath.get();
+            let tempObject = clone(state.editedRecipe.get());
+            const imageRef = ref(
+              storage,
+              `${user?.email}/${tempImageFile.name + v4()}`
+            );
+            new Compressor(tempImageFile, {
+              quality: 0.2,
+              success(result) {
+                uploadBytes(imageRef, result)
+                  .then((snapshot) => getDownloadURL(snapshot.ref))
+                  .then((url) => (tempObject.imgPath = url))
+                  .then(() =>
+                    setDoc(
+                      doc(
+                        db,
+                        `${user?.email}`,
+                        "recipeCollection",
+                        "recipes",
+                        `${tempObject.docId}`
+                      ),
+                      tempObject
+                    )
+                  );
+              },
+            });
+            if (imgToDelete) {
+              deleteImage(imgToDelete);
+            }
+          } else {
+            await setDoc(
+              doc(
+                db,
+                `${user?.email}`,
+                "recipeCollection",
+                "recipes",
+                `${state.editedRecipe.docId.get()}`
+              ),
+              state.editedRecipe.get()
+            );
+          }
         }
       }
     }
+  };
+
+  const deleteImage = async (imgPath: string | undefined) => {
+    const deleteRef = ref(storage, imgPath);
+    await deleteObject(deleteRef);
   };
 
   return (

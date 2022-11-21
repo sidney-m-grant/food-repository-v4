@@ -1,15 +1,32 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { store } from "../../util/store";
 import { useState as useStateHookState } from "@hookstate/core";
 import styles from "./HeaderInputComponent.module.css";
+import { useAuth } from "../../../context/AuthContext";
+import { db } from "../../../config/firebase";
+import { doc, getDoc } from "firebase/firestore";
 
 interface Props {
   recipeInputType: "edited" | "input";
 }
 
 const HeaderInputComponent: React.FC<Props> = ({ recipeInputType }) => {
+  const { user } = useAuth();
   const state = useStateHookState(store);
   const [selectedCookBook, setSelectedCookBook] = useState("");
+  const [cookBookList, setCookBookList] = useState<string[]>([]);
+
+  useEffect(() => {
+    const getCookBooks = async () => {
+      const snapshot = await getDoc(
+        doc(db, user.email, "recipeCollection", "miscItems", "cookBookArray")
+      );
+      const cookBooks = snapshot.data()?.cookBooks;
+      state.cookBookList.set(cookBooks);
+      setCookBookList(cookBooks);
+    };
+    getCookBooks();
+  }, [user.email]);
 
   const handleEditedPrepTimeChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -83,9 +100,9 @@ const HeaderInputComponent: React.FC<Props> = ({ recipeInputType }) => {
     state.inputRecipe.briefDescription.set(e.target.value);
   };
 
-  const listOfCookBooks = state.cookBookList
-    .get()
-    .filter((cookBook) => cookBook != "All Recipes");
+  const listOfCookBooks = cookBookList.filter(
+    (cookBook) => cookBook != "All Recipes"
+  );
 
   const filteredListOfCookBooks = listOfCookBooks.map((entry) => {
     return (
@@ -95,8 +112,16 @@ const HeaderInputComponent: React.FC<Props> = ({ recipeInputType }) => {
     );
   });
 
-  const handleCookBookSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedCookBook(e.target.value);
+  const handleEditedCookBookSelect = (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    state.editedRecipe.cookBook.set(e.target.value);
+  };
+
+  const handleInputCookBookSelect = (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    state.inputRecipe.cookBook.set(e.target.value);
   };
 
   return (
@@ -167,20 +192,28 @@ const HeaderInputComponent: React.FC<Props> = ({ recipeInputType }) => {
           value={state.inputRecipe.briefDescription.get()}
         ></input>
       )}
-      {recipeInputType === "edited" ? (
-        <input
-          onChange={handleEditedNameChange}
-          value={state.editedRecipe.recipeName.get()}
-        ></input>
-      ) : (
+      {recipeInputType === "input" ? (
         <input
           onChange={handleInputNameChange}
           value={state.inputRecipe.recipeName.get()}
         ></input>
-      )}
+      ) : null}
 
-      {state.cookBookList.get() ? (
-        <select onChange={handleCookBookSelect}>
+      {recipeInputType === "edited" && cookBookList ? (
+        <select
+          onChange={handleEditedCookBookSelect}
+          value={state.editedRecipe.cookBook.get()}
+        >
+          <option value={""}></option>
+          {filteredListOfCookBooks}
+        </select>
+      ) : null}
+
+      {recipeInputType === "input" && cookBookList ? (
+        <select
+          onChange={handleInputCookBookSelect}
+          value={state.inputRecipe.cookBook.get()}
+        >
           <option value={""}></option>
           {filteredListOfCookBooks}
         </select>

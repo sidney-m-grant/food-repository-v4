@@ -31,6 +31,7 @@ export type Recipe = {
   servesAmount?: string;
   source?: string;
   briefDescription?: string;
+  cookBook?: string;
 };
 
 export type RecipeStep = {
@@ -46,6 +47,7 @@ const currentRecipe: Recipe = {
   servesAmount: "",
   source: "",
   briefDescription: "",
+  cookBook: "",
   stepList: [
     {
       for: "",
@@ -82,6 +84,7 @@ const editedRecipe: Recipe = {
   servesAmount: "",
   source: "",
   briefDescription: "",
+  cookBook: "",
   stepList: [
     {
       for: "",
@@ -118,6 +121,7 @@ const inputRecipe: Recipe = {
   servesAmount: "",
   source: "",
   briefDescription: "",
+  cookBook: "",
   stepList: [
     {
       for: "",
@@ -146,6 +150,8 @@ const inputRecipe: Recipe = {
   ],
 };
 
+const allRecipes: Recipe[] = [];
+
 export const store = createState({
   currentRecipe: currentRecipe,
   editedRecipe: editedRecipe,
@@ -153,4 +159,6 @@ export const store = createState({
   editedImagePreview: "",
   inputImagePreview: "",
   cookBookList: [],
+  globalIngredientList: [""],
+  allRecipes: allRecipes,
 });
