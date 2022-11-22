@@ -23,7 +23,9 @@ const IndividualRecipe: React.FC<Props> = ({ recipe, setDisplayType }) => {
 
   return (
     <>
-      <h5 onClick={handleCurrentClick}>{recipe.recipeName}</h5>
+      <h5 style={{ display: "inline" }} onClick={handleCurrentClick}>
+        {recipe.recipeName}
+      </h5>
       <button onClick={handleEditClick}>Edit</button>
     </>
   );

@@ -7,8 +7,9 @@ import { useState as useStateHookState } from "@hookstate/core";
 import { store } from "../components/util/store";
 import { db } from "../config/firebase";
 import MainInputComponent from "../components/inputComponents/mainInputComponent/MainInputComponent";
+import HeaderInputComponent from "../components/inputComponents/headerInputComponent/HeaderInputComponent";
 
-export type DisplayType = "edited" | "current" | ""
+export type DisplayType = "edited" | "current" | "";
 
 const RecipeList = () => {
   const { user } = useAuth();
@@ -28,9 +29,12 @@ const RecipeList = () => {
 
   return (
     <div className="recipe-container">
-      <RecipeListSidebar setDisplayType={setDisplayType}/>
+      <RecipeListSidebar setDisplayType={setDisplayType} />
       {displayType === "edited" ? (
-        <MainInputComponent recipeInputType="edited" />
+        <>
+          <HeaderInputComponent recipeInputType="edited" />
+          <MainInputComponent recipeInputType="edited" />
+        </>
       ) : null}
       {displayType === "current" ? <CurrentRecipeContainer /> : null}
     </div>

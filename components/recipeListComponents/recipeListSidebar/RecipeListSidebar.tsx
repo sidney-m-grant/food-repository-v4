@@ -108,12 +108,12 @@ const RecipeListSidebar: React.FC<Props> = ({ setDisplayType }) => {
 
   return (
     <div className={styles.RecipeListSidebar}>
-      <button onClick={handleEditToolsClick}>Edit Tools</button>
+      <div onClick={handleEditToolsClick}>Edit Tools</div>
       {openSubMenu === "editTools" ? (
         <InputSidebarFunctions recipeInputType="edited" />
       ) : null}
       <br></br>
-      <button onClick={handleSearchClick}>Search</button>
+      <div onClick={handleSearchClick}>Search</div>
       {openSubMenu === "search" ? (
         <SearchComponent
           allRecipes={allRecipes}
@@ -121,7 +121,7 @@ const RecipeListSidebar: React.FC<Props> = ({ setDisplayType }) => {
         />
       ) : null}
       <br></br>
-      <button onClick={handleCookBooksClick}>Cook Books</button>
+      <div onClick={handleCookBooksClick}>Cook Books</div>
       {openSubMenu === "cookBooks" ? (
         <CookBooks
           setSelectedCookBook={setSelectedCookBook}

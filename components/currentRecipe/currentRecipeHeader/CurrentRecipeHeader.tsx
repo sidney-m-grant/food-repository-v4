@@ -18,6 +18,10 @@ const CurrentRecipeHeader = () => {
         Brief Description: {state.currentRecipe.briefDescription.get()}
       </span>
       <span>Name: {state.currentRecipe.recipeName.get()}</span>
+      <img
+        src={state.currentRecipe.imgPath.get()}
+        style={{ height: 150, width: 150 }}
+      ></img>
     </div>
   );
 };
