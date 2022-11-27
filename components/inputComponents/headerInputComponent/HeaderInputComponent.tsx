@@ -1,14 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { store } from "../../util/store";
 import { useState as useStateHookState } from "@hookstate/core";
-import styles from "./HeaderInputComponent.module.css";
 import { useAuth } from "../../../context/AuthContext";
 import { db } from "../../../config/firebase";
 import { doc, getDoc } from "firebase/firestore";
+import styled from "styled-components";
 
 interface Props {
   recipeInputType: "edited" | "input";
 }
+
+export const Header_Input_Container = styled.div`
+  border: 1px;
+  border-style: solid;
+  width: auto;
+  display: block;
+`;
 
 const HeaderInputComponent: React.FC<Props> = ({ recipeInputType }) => {
   const { user } = useAuth();
@@ -125,7 +132,7 @@ const HeaderInputComponent: React.FC<Props> = ({ recipeInputType }) => {
   };
 
   return (
-    <div className={styles.HeaderInputComponent}>
+    <Header_Input_Container>
       {recipeInputType === "edited" ? (
         <input
           onChange={handleEditedPrepTimeChange}
@@ -218,7 +225,7 @@ const HeaderInputComponent: React.FC<Props> = ({ recipeInputType }) => {
           {filteredListOfCookBooks}
         </select>
       ) : null}
-    </div>
+    </Header_Input_Container>
   );
 };
 

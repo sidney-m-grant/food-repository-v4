@@ -1,15 +1,21 @@
 import React from "react";
 import HeaderInputComponent from "../components/inputComponents/headerInputComponent/HeaderInputComponent";
-import InputSidebar from "../components/inputComponents/inputSidebar/InputSidebar";
+import InputSideBar from "../components/inputComponents/inputSideBar/InputSideBar";
 import MainInputComponent from "../components/inputComponents/mainInputComponent/MainInputComponent";
+import styled from "styled-components";
+
+export const Recipe_Container = styled.div`
+  margin-left: 250px;
+  margin-top: 30px;
+`;
 
 const RecipeInput = () => {
   return (
-    <div className="recipe-container">
-      <InputSidebar recipeInputType="input" />
+    <Recipe_Container>
+      <InputSideBar recipeInputType="input" />
       <HeaderInputComponent recipeInputType="input" />
       <MainInputComponent recipeInputType="input" />
-    </div>
+    </Recipe_Container>
   );
 };
 

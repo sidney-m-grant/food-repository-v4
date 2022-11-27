@@ -1,6 +1,0 @@
-.CurrentRecipeContainer {
-  display: grid;
-  margin-left: 250 px;
-  margin-top: 30px;
-  grid-template-columns: 1fr 2fr;
-}

@@ -3,6 +3,18 @@ import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { setDoc, doc } from "firebase/firestore";
 import { db } from "../config/firebase";
+import styled from "styled-components";
+
+export const Sign_In_Container = styled.div`
+  width: 450px;
+  height: 300px;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+`;
 
 const SignIn = () => {
   const [signInEmail, setSignInEmail] = useState("");
@@ -64,7 +76,7 @@ const SignIn = () => {
   };
 
   return (
-    <div className="sign-in-container">
+    <Sign_In_Container>
       <div>{user?.email ? user.email : "no one logged in"}</div>
       <div>
         <input
@@ -108,7 +120,7 @@ const SignIn = () => {
         <button onClick={logOut}>Log Out</button>
         <button onClick={handleAlreadySignedIn}>Already Signed In</button>
       </div>
-    </div>
+    </Sign_In_Container>
   );
 };
 

@@ -8,6 +8,12 @@ import { store } from "../components/util/store";
 import { db } from "../config/firebase";
 import MainInputComponent from "../components/inputComponents/mainInputComponent/MainInputComponent";
 import HeaderInputComponent from "../components/inputComponents/headerInputComponent/HeaderInputComponent";
+import styled from "styled-components";
+
+export const Recipe_Container = styled.div`
+  margin-left: 250px;
+  margin-top: 30px;
+`;
 
 export type DisplayType = "edited" | "current" | "";
 
@@ -28,7 +34,7 @@ const RecipeList = () => {
   }, [user.email]);
 
   return (
-    <div className="recipe-container">
+    <Recipe_Container>
       <RecipeListSidebar setDisplayType={setDisplayType} />
       {displayType === "edited" ? (
         <>
@@ -37,7 +43,7 @@ const RecipeList = () => {
         </>
       ) : null}
       {displayType === "current" ? <CurrentRecipeContainer /> : null}
-    </div>
+    </Recipe_Container>
   );
 };
 

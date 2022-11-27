@@ -3,8 +3,15 @@ import { useState as useStateHookState } from "@hookstate/core";
 import { store } from "../../util/store";
 import CurrentIngredientBlock from "../currentIngredientBlock/CurrentIngredientBlock";
 import CurrentStepBlock from "../currentStepBlock/CurrentStepBlock";
-import styles from "./CurrentRecipeContainer.module.css";
 import CurrentRecipeHeader from "../currentRecipeHeader/CurrentRecipeHeader";
+import styled from "styled-components";
+
+export const Current_Recipe_Container = styled.div`
+  display: grid;
+  margin-left: 250 px;
+  margin-top: 30px;
+  grid-template-columns: 1fr 2fr;
+`;
 
 const CurrentRecipeContainer = () => {
   const state = useStateHookState(store);
@@ -33,10 +40,10 @@ const CurrentRecipeContainer = () => {
   return (
     <div>
       <CurrentRecipeHeader />
-      <div className={styles.CurrentRecipeContainer}>
+      <Current_Recipe_Container>
         <ul>{listIngredients}</ul>
         <ul>{listSteps}</ul>
-      </div>
+      </Current_Recipe_Container>
     </div>
   );
 };

@@ -5,13 +5,24 @@ import { useAuth } from "../../../context/AuthContext";
 import { getDocs, collection } from "firebase/firestore";
 import { db } from "../../../config/firebase";
 import RecipeListComponent from "../recipeListComponent/RecipeListComponent";
-import styles from "./RecipeListSidebar.module.css";
-import InputSidebarFunctions from "../../inputComponents/inputSidebar/inputSidebarFunctions/InputSidebarFunctions";
+import styled from "styled-components";
+import InputSidebarFunctions from "../../inputComponents/inputSideBar/inputSideBarFunctions/InputSideBarFunctions";
 import CookBooks from "../cookBooks/CookBooks";
 import SearchComponent from "../search/SearchComponent";
 import { DisplayType } from "../../../pages/RecipeList";
 
 export type OpenSubMenu = "search" | "cookBooks" | "editTools" | "";
+
+export const Recipe_List_Sidebar = styled.div`
+  width: 250px;
+  position: fixed;
+  left: 0;
+  border: 1px;
+  border-style: solid;
+  overflow-y: scroll;
+  top: 30px;
+  bottom: 0px;
+`;
 
 interface Props {
   setDisplayType: React.Dispatch<React.SetStateAction<DisplayType>>;
@@ -107,7 +118,7 @@ const RecipeListSidebar: React.FC<Props> = ({ setDisplayType }) => {
   };
 
   return (
-    <div className={styles.RecipeListSidebar}>
+    <Recipe_List_Sidebar>
       <div onClick={handleEditToolsClick}>Edit Tools</div>
       {openSubMenu === "editTools" ? (
         <InputSidebarFunctions recipeInputType="edited" />
@@ -142,7 +153,7 @@ const RecipeListSidebar: React.FC<Props> = ({ setDisplayType }) => {
           setDisplayType={setDisplayType}
         />
       ) : null}
-    </div>
+    </Recipe_List_Sidebar>
   );
 };
 

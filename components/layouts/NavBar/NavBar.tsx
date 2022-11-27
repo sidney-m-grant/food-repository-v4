@@ -1,5 +1,15 @@
 import React from "react";
-import styles from "./NavBar.module.css";
+import styled from "styled-components";
+
+export const Nav_Bar = styled.div`
+  position: fixed;
+  top: 0;
+  width: 100%;
+  display: block;
+  height: 30px;
+  border: 1px;
+  border-style: solid;
+`;
 
 import { useRouter } from "next/router";
 
@@ -35,7 +45,7 @@ const NavBar = () => {
   };
 
   return (
-    <div className={styles.navBar}>
+    <Nav_Bar>
       <button onClick={handleRecipeListClick}>To Recipe List</button>
       <button onClick={handleRecipeInputClick}>To Recipe Input</button>
       <button onClick={handleCalendarClick}>To Calendar</button>
@@ -43,7 +53,7 @@ const NavBar = () => {
       <button onClick={handleSocialClick}>To Social</button>
       <button onClick={handleSignInClick}>To Sign In</button>
       <button onClick={handleRecipeEditClick}>To Edit Recipe</button>
-    </div>
+    </Nav_Bar>
   );
 };
 

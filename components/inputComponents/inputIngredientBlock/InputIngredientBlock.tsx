@@ -2,7 +2,6 @@ import React from "react";
 import { IngredientBlock, store } from "../../util/store";
 import { useState as useStateHookState, none } from "@hookstate/core";
 import InputIngredient from "../inputIngredient/InputIngredient";
-import styles from "./InputIngredientBlock.module.css";
 
 interface Props {
   inputIngredientBlock: IngredientBlock;
@@ -18,7 +17,7 @@ const InputIngredientBlock: React.FC<Props> = ({
   const listOfIngredients = inputIngredientBlock.ingredients.map(
     (ingredient) => {
       return (
-        <li className={styles.InputIngredient} key={ingredient.id}>
+        <li key={ingredient.id}>
           <InputIngredient
             inputIngredient={ingredient}
             inputIngredientBlock={inputIngredientBlock}
