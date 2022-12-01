@@ -39,6 +39,14 @@ export type RecipeStep = {
   stepNumber: number;
 };
 
+export type CalendarDay = {
+  isCurrentMonth: boolean;
+  month: number;
+  number: number;
+  year: number;
+  date: Date;
+};
+
 const currentRecipe: Recipe = {
   recipeName: "",
   prepTime: "",

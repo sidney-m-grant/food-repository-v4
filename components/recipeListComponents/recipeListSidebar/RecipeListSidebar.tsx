@@ -13,7 +13,7 @@ import { DisplayType } from "../../../pages/RecipeList";
 
 export type OpenSubMenu = "search" | "cookBooks" | "editTools" | "";
 
-export const Recipe_List_Sidebar = styled.div`
+export const Recipe_List_SideBar_Container = styled.div`
   width: 250px;
   position: fixed;
   left: 0;
@@ -22,6 +22,15 @@ export const Recipe_List_Sidebar = styled.div`
   overflow-y: scroll;
   top: 30px;
   bottom: 0px;
+`;
+
+export const Recipe_List_SideBar_Label = styled.span`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-style: solid;
+  padding: 5px;
+  margin: 5px;
 `;
 
 interface Props {
@@ -118,13 +127,17 @@ const RecipeListSidebar: React.FC<Props> = ({ setDisplayType }) => {
   };
 
   return (
-    <Recipe_List_Sidebar>
-      <div onClick={handleEditToolsClick}>Edit Tools</div>
+    <Recipe_List_SideBar_Container>
+      <Recipe_List_SideBar_Label onClick={handleEditToolsClick}>
+        Edit Tools
+      </Recipe_List_SideBar_Label>
       {openSubMenu === "editTools" ? (
         <InputSidebarFunctions recipeInputType="edited" />
       ) : null}
       <br></br>
-      <div onClick={handleSearchClick}>Search</div>
+      <Recipe_List_SideBar_Label onClick={handleSearchClick}>
+        Search
+      </Recipe_List_SideBar_Label>
       {openSubMenu === "search" ? (
         <SearchComponent
           allRecipes={allRecipes}
@@ -132,7 +145,9 @@ const RecipeListSidebar: React.FC<Props> = ({ setDisplayType }) => {
         />
       ) : null}
       <br></br>
-      <div onClick={handleCookBooksClick}>Cook Books</div>
+      <Recipe_List_SideBar_Label onClick={handleCookBooksClick}>
+        Cook Books
+      </Recipe_List_SideBar_Label>
       {openSubMenu === "cookBooks" ? (
         <CookBooks
           setSelectedCookBook={setSelectedCookBook}
@@ -153,7 +168,7 @@ const RecipeListSidebar: React.FC<Props> = ({ setDisplayType }) => {
           setDisplayType={setDisplayType}
         />
       ) : null}
-    </Recipe_List_Sidebar>
+    </Recipe_List_SideBar_Container>
   );
 };
 
