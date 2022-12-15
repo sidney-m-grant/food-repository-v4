@@ -34,6 +34,9 @@ const SignIn = () => {
       const recipeCollection = {
         name: "recipe",
       };
+      const calendarCollection = {
+        name: "calendar",
+      };
       const friendRequestArray = {
         friendRequests: [],
       };
@@ -53,6 +56,10 @@ const SignIn = () => {
         friendListArray
       );
       await setDoc(doc(db, signUpEmail, "recipeCollection"), recipeCollection);
+      await setDoc(
+        doc(db, signUpEmail, "calendarCollection"),
+        calendarCollection
+      );
       await setDoc(
         doc(db, signUpEmail, "recipeCollection", "miscItems", "cookBookArray"),
         cookBookArray

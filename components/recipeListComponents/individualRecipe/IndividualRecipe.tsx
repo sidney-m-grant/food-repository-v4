@@ -5,7 +5,7 @@ import { DisplayType } from "../../../pages/RecipeList";
 
 interface Props {
   recipe: Recipe;
-  setDisplayType: React.Dispatch<React.SetStateAction<DisplayType>>;
+  setDisplayType?: React.Dispatch<React.SetStateAction<DisplayType>>;
 }
 
 const IndividualRecipe: React.FC<Props> = ({ recipe, setDisplayType }) => {
@@ -13,11 +13,17 @@ const IndividualRecipe: React.FC<Props> = ({ recipe, setDisplayType }) => {
 
   const handleCurrentClick = () => {
     state.currentRecipe.set(recipe);
+    if (!setDisplayType) {
+      return;
+    }
     setDisplayType("current");
   };
 
   const handleEditClick = () => {
     state.editedRecipe.set(recipe);
+    if (!setDisplayType) {
+      return;
+    }
     setDisplayType("edited");
   };
 

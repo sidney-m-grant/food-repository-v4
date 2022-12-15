@@ -1,7 +1,10 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import IndividualDay from "./IndividualDay";
-import type { CalendarDay } from "../util/store";
+import type { CalendarDay, CalendarItem } from "../util/store";
 import styled from "styled-components";
+import { addDoc, collection, getDocs } from "firebase/firestore";
+import { db } from "../../config/firebase";
+import { useAuth } from "../../context/AuthContext";
 
 interface Props {
   currentDateData: {
@@ -10,6 +13,8 @@ interface Props {
   };
   selectedMonth: number;
   selectedYear: number;
+  currentlyDragged: string;
+  selectedMeal: string;
 }
 
 const Calendar_Body = styled.div`
@@ -45,7 +50,12 @@ const CalendarDays: React.FC<Props> = ({
   currentDateData,
   selectedMonth,
   selectedYear,
+  currentlyDragged,
+  selectedMeal,
 }) => {
+  const { user } = useAuth();
+  const [calendarItems, setCalendarItems] = useState<CalendarItem[]>([]);
+
   const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
   const weekdaysMap = weekdays.map((weekday) => {
@@ -55,6 +65,32 @@ const CalendarDays: React.FC<Props> = ({
       </Weekday>
     );
   });
+
+  useEffect(() => {
+    const getCalendar = async () => {
+      const calendar = await getDocs(
+        collection(db, user?.email, "calendarCollection", "calendar")
+      );
+      const tempArray: any = calendar.docs.map((doc) => ({
+        docId: doc.id,
+        ...doc.data(),
+      }));
+      const calendarItemArray: CalendarItem[] = [];
+      tempArray.forEach((calendarItem: CalendarItem) => {
+        const temp: CalendarItem = {
+          month: calendarItem.month,
+          day: calendarItem.day,
+          year: calendarItem.year,
+          selectedMeal: calendarItem.selectedMeal,
+          name: calendarItem.name,
+        };
+        calendarItemArray.push(temp);
+      });
+      setCalendarItems(calendarItemArray);
+    };
+
+    getCalendar();
+  }, [user?.email]);
 
   let firstDayOfMonth = new Date(selectedYear, selectedMonth, 1);
   let weekdayOfFirstDay = firstDayOfMonth.getDay();
@@ -77,14 +113,42 @@ const CalendarDays: React.FC<Props> = ({
       number: firstDayOfMonth.getDate(),
       year: firstDayOfMonth.getFullYear(),
       date: firstDayOfMonth,
+      id: i + 1,
     };
 
     dateArray.push(calendarDay);
   }
 
+  const dragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+  };
+
+  const handleDrop = async (
+    e: React.DragEvent<HTMLDivElement>,
+    day: CalendarDay
+  ) => {
+    const newCalendarItem = {
+      month: day.month,
+      day: day.number,
+      year: day.year,
+      selectedMeal: selectedMeal,
+      name: currentlyDragged,
+    };
+    addDoc(
+      collection(db, user.email, "calendarCollection", "calendar"),
+      newCalendarItem
+    );
+  };
+
   const calendar = dateArray.map((day) => {
     return (
-      <IndividualDay key={dateArray.indexOf(day)} day={day}></IndividualDay>
+      <div
+        key={day.id}
+        onDragOver={dragOver}
+        onDrop={(event) => handleDrop(event, day)}
+      >
+        <IndividualDay key={day.id} day={day} calendarItems={calendarItems}></IndividualDay>
+      </div>
     );
   });
 

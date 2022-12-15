@@ -45,6 +45,15 @@ export type CalendarDay = {
   number: number;
   year: number;
   date: Date;
+  id: number;
+};
+
+export type CalendarItem = {
+  month: number;
+  day: number;
+  year: number;
+  selectedMeal: string;
+  name: string;
 };
 
 const currentRecipe: Recipe = {

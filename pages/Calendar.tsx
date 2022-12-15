@@ -2,10 +2,13 @@ import React, { useState } from "react";
 import CalendarDays from "../components/calendarComponents/CalendarDays";
 import CalendarHeader from "../components/calendarComponents/CalendarHeader";
 import styled from "styled-components";
+import CalendarSidebar from "../components/calendarComponents/CalendarSidebar";
 
 const Calendar_Container = styled.div`
   width: 900px;
   height: 600px;
+  margin-left: 250px;
+  margin-top: 30px;
 `;
 
 const Calendar = () => {
@@ -17,21 +20,32 @@ const Calendar = () => {
 
   const [selectedMonth, setSelectedMonth] = useState(currentDateData.month);
   const [selectedYear, setSelectedYear] = useState(currentDateData.year);
+  const [currentlyDragged, setCurrentlyDragged] = useState("");
+  const [selectedMeal, setSelectedMeal] = useState<string>("breakfast");
 
   return (
-    <Calendar_Container>
-      <CalendarHeader
-        selectedMonth={selectedMonth}
-        selectedYear={selectedYear}
-        setSelectedMonth={setSelectedMonth}
-        setSelectedYear={setSelectedYear}
-      />
-      <CalendarDays
-        currentDateData={currentDateData}
-        selectedMonth={selectedMonth}
-        selectedYear={selectedYear}
-      />
-    </Calendar_Container>
+    <>
+      <CalendarSidebar
+        setCurrentlyDragged={setCurrentlyDragged}
+        setSelectedMeal={setSelectedMeal}
+        selectedMeal={selectedMeal}
+      ></CalendarSidebar>
+      <Calendar_Container>
+        <CalendarHeader
+          selectedMonth={selectedMonth}
+          selectedYear={selectedYear}
+          setSelectedMonth={setSelectedMonth}
+          setSelectedYear={setSelectedYear}
+        />
+        <CalendarDays
+          currentDateData={currentDateData}
+          selectedMonth={selectedMonth}
+          selectedYear={selectedYear}
+          currentlyDragged={currentlyDragged}
+          selectedMeal={selectedMeal}
+        />
+      </Calendar_Container>
+    </>
   );
 };
 

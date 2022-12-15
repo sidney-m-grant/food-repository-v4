@@ -1,30 +1,27 @@
-import React, { useEffect, useState } from "react";
-import { useState as useStateHookState } from "@hookstate/core";
-import { store, Recipe } from "../../util/store";
-import { useAuth } from "../../../context/AuthContext";
-import { getDocs, collection } from "firebase/firestore";
-import { db } from "../../../config/firebase";
-import RecipeListComponent from "../recipeListComponent/RecipeListComponent";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import InputSidebarFunctions from "../../inputComponents/inputSideBar/inputSideBarFunctions/InputSideBarFunctions";
-import CookBooks from "../cookBooks/CookBooks";
-import SearchComponent from "../search/SearchComponent";
-import { DisplayType } from "../../../pages/RecipeList";
+import type { Recipe } from "../util/store";
+import type { OpenSubMenu } from "../recipeListComponents/recipeListSidebar/RecipeListSidebar";
+import { useAuth } from "../../context/AuthContext";
+import { useState as useStateHookState } from "@hookstate/core";
+import { store } from "../util/store";
+import { getDocs, collection } from "firebase/firestore";
+import { db } from "../../config/firebase";
+import CalendarSearchComponent from "../recipeListComponents/search/CalendarSearchComponent";
+import CookBooks from "../recipeListComponents/cookBooks/CookBooks";
+import CalendarRecipeList from "./CalendarRecipeList";
 
-export type OpenSubMenu = "search" | "cookBooks" | "editTools" | "";
-
-export const Recipe_List_Sidebar_Container = styled.div`
+export const Calendar_Sidebar_Container = styled.div`
+  height: 100%;
   width: 250px;
   position: fixed;
   left: 0;
   border: 1px;
   border-style: solid;
-  overflow-y: scroll;
   top: 30px;
-  bottom: 0px;
 `;
 
-export const Recipe_List_Sidebar_Label = styled.span`
+export const Calendar_Sidebar_Label = styled.span`
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -34,10 +31,16 @@ export const Recipe_List_Sidebar_Label = styled.span`
 `;
 
 interface Props {
-  setDisplayType: React.Dispatch<React.SetStateAction<DisplayType>>;
+  setCurrentlyDragged: React.Dispatch<React.SetStateAction<string>>;
+  setSelectedMeal: React.Dispatch<React.SetStateAction<string>>;
+  selectedMeal: string;
 }
 
-const RecipeListSidebar: React.FC<Props> = ({ setDisplayType }) => {
+const CalendarSidebar: React.FC<Props> = ({
+  setCurrentlyDragged,
+  setSelectedMeal,
+  selectedMeal,
+}) => {
   const [allRecipes, setAllRecipes] = useState<Recipe[]>([]);
   const [openSubMenu, setOpenSubMenu] = useState<OpenSubMenu>("");
   const [selectedCookBook, setSelectedCookBook] = useState<string>("");
@@ -99,15 +102,6 @@ const RecipeListSidebar: React.FC<Props> = ({ setDisplayType }) => {
     getRecipes();
   }, [user?.email]);
 
-  const handleEditToolsClick = () => {
-    if (openSubMenu !== "editTools") {
-      setOpenSubMenu("editTools");
-      setSelectedCookBook("");
-    } else {
-      setOpenSubMenu("");
-    }
-  };
-
   const handleSearchClick = () => {
     if (openSubMenu !== "search") {
       setOpenSubMenu("search");
@@ -125,28 +119,54 @@ const RecipeListSidebar: React.FC<Props> = ({ setDisplayType }) => {
     }
   };
 
+  const handleSelectedMealClick = (e: React.FormEvent<HTMLInputElement>) => {
+    setSelectedMeal(e.currentTarget.value);
+  };
+
   return (
-    <Recipe_List_Sidebar_Container>
-      <Recipe_List_Sidebar_Label onClick={handleEditToolsClick}>
-        Edit Tools
-      </Recipe_List_Sidebar_Label>
-      {openSubMenu === "editTools" ? (
-        <InputSidebarFunctions recipeInputType="edited" />
-      ) : null}
-      <br></br>
-      <Recipe_List_Sidebar_Label onClick={handleSearchClick}>
+    <Calendar_Sidebar_Container>
+      <div>
+        <input
+          type="radio"
+          name="selectedMeal"
+          value="breakfast"
+          id="breakfast"
+          checked={selectedMeal === "breakfast"}
+          onChange={handleSelectedMealClick}
+        ></input>
+        <label htmlFor="breakfast">Breakfast</label>
+        <input
+          type="radio"
+          name="selectedMeal"
+          value="lunch"
+          id="lunch"
+          checked={selectedMeal === "lunch"}
+          onChange={handleSelectedMealClick}
+        ></input>
+        <label htmlFor="lunch">Lunch</label>
+        <input
+          type="radio"
+          name="selectedMeal"
+          value="dinner"
+          id="dinner"
+          checked={selectedMeal === "dinner"}
+          onChange={handleSelectedMealClick}
+        ></input>
+        <label htmlFor="dinner">Dinner</label>
+      </div>
+      <Calendar_Sidebar_Label onClick={handleSearchClick}>
         Search
-      </Recipe_List_Sidebar_Label>
+      </Calendar_Sidebar_Label>
       {openSubMenu === "search" ? (
-        <SearchComponent
+        <CalendarSearchComponent
           allRecipes={allRecipes}
-          setDisplayType={setDisplayType}
+          setCurrentlyDragged={setCurrentlyDragged}
         />
       ) : null}
       <br></br>
-      <Recipe_List_Sidebar_Label onClick={handleCookBooksClick}>
+      <Calendar_Sidebar_Label onClick={handleCookBooksClick}>
         Cook Books
-      </Recipe_List_Sidebar_Label>
+      </Calendar_Sidebar_Label>
       {openSubMenu === "cookBooks" ? (
         <CookBooks
           setSelectedCookBook={setSelectedCookBook}
@@ -154,21 +174,21 @@ const RecipeListSidebar: React.FC<Props> = ({ setDisplayType }) => {
         />
       ) : null}
       {selectedCookBook && selectedCookBook !== "All Recipes" ? (
-        <RecipeListComponent
+        <CalendarRecipeList
+          setCurrentlyDragged={setCurrentlyDragged}
           recipes={allRecipes.filter((recipe) => {
             recipe.cookBook === selectedCookBook;
           })}
-          setDisplayType={setDisplayType}
         />
       ) : null}
       {selectedCookBook && selectedCookBook === "All Recipes" ? (
-        <RecipeListComponent
+        <CalendarRecipeList
+          setCurrentlyDragged={setCurrentlyDragged}
           recipes={allRecipes}
-          setDisplayType={setDisplayType}
         />
       ) : null}
-    </Recipe_List_Sidebar_Container>
+    </Calendar_Sidebar_Container>
   );
 };
 
-export default RecipeListSidebar;
+export default CalendarSidebar;
