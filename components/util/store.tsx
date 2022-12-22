@@ -177,5 +177,7 @@ export const store = createState({
   inputImagePreview: "",
   cookBookList: [],
   globalIngredientList: [""],
+  friendRequestList: [],
+  listOfFriends: [],
   allRecipes: allRecipes,
 });

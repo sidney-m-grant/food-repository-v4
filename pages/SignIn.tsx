@@ -38,10 +38,10 @@ const SignIn = () => {
         name: "calendar",
       };
       const friendRequestArray = {
-        friendRequests: [],
+        friendRequests: [""],
       };
       const friendListArray = {
-        friendList: [],
+        friendList: [""],
       };
       const cookBookArray = {
         cookBooks: ["All Recipes"],
